@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="CRM_WPF.Views.DashboardView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="#ecf0f1">
+
+    <ScrollViewer>
+        <StackPanel Margin="10">
+            <TextBlock Text="Dashboard" FontSize="28" FontWeight="Bold" Margin="0,0,0,20" Foreground="#34495e"/>
+            <UniformGrid Columns="2" Rows="2" Margin="0,0,0,20">
+                <!-- Panel 1: Sprzedaż -->
+                <Border Background="White" CornerRadius="10" Margin="5" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="Sprzedaż" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock Text="Suma: $12,345" FontSize="16"/>
+                        <TextBlock Text="Wzrost: 12%" FontSize="14"/>
+                    </StackPanel>
+                </Border>
+                <!-- Panel 2: Nowi Klienci -->
+                <Border Background="White" CornerRadius="10" Margin="5" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="Nowi Klienci" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock Text="Ilość: 45" FontSize="16"/>
+                    </StackPanel>
+                </Border>
+                <!-- Panel 3: Zadania -->
+                <Border Background="White" CornerRadius="10" Margin="5" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="Zadania" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock Text="Do wykonania: 8" FontSize="16"/>
+                    </StackPanel>
+                </Border>
+                <!-- Panel 4: Spotkania -->
+                <Border Background="White" CornerRadius="10" Margin="5" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="Spotkania" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock Text="Nadchodzące: 3" FontSize="16"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
