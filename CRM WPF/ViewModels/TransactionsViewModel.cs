@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using CRM_WPF.Helpers;
 using CRM_WPF.Models;
@@ -26,12 +27,35 @@ namespace CRM_WPF.ViewModels
 
         public ICommand SearchCommand { get; }
         public ICommand AddTransactionCommand { get; }
+        public ICommand ExportToCsvCommand { get; }
+        public ICommand ExportToExcelCommand { get; }
+
+        private readonly CsvExportService _csvExportService;
+        private readonly ExcelExportService _excelExportService;
 
         public TransactionsViewModel()
         {
             Transactions = new ObservableCollection<Transaction>(DataService.Instance.Transactions);
             SearchCommand = new RelayCommand(_ => SearchTransactions());
             AddTransactionCommand = new RelayCommand(_ => AddTransaction());
+
+            // Inicjalizacja usług eksportu
+            _csvExportService = new CsvExportService();
+            _excelExportService = new ExcelExportService();
+
+            // Komendy eksportu
+            ExportToCsvCommand = new RelayCommand(_ => ExportToCsv());
+            ExportToExcelCommand = new RelayCommand(_ => ExportToExcel());
+        }
+
+        private void ExportToCsv()
+        {
+            _csvExportService.ExportToCsv(Transactions.ToList());
+        }
+
+        private void ExportToExcel()
+        {
+            _excelExportService.ExportToExcel(Transactions.ToList());
         }
 
         private void SearchTransactions()
