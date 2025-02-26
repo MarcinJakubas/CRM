@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using CRM_WPF.Models;
@@ -10,6 +11,8 @@ namespace CRM_WPF.ViewModels
 {
     public class ClientsViewModel : BaseViewModel
     {
+        private readonly DataService _dataService;
+
         private ObservableCollection<Customer> _customers;
         public ObservableCollection<Customer> Customers
         {
@@ -21,7 +24,7 @@ namespace CRM_WPF.ViewModels
         public string SearchText
         {
             get => _searchText;
-            set { _searchText = value; OnPropertyChanged(); }
+            set { _searchText = value; OnPropertyChanged(); SearchCustomers(); }
         }
 
         private Customer _selectedCustomer;
@@ -35,26 +38,35 @@ namespace CRM_WPF.ViewModels
         public ICommand AddClientCommand { get; }
         public ICommand OpenClientDetailsCommand { get; }
 
-        public ClientsViewModel()
+        public ClientsViewModel(DataService dataService)
         {
-            Customers = new ObservableCollection<Customer>(DataService.Instance.Customers);
+            _dataService = dataService;
+            Customers = new ObservableCollection<Customer>();
 
-            // 🔥 Poprawione wywołanie RelayCommand
             SearchCommand = new RelayCommand(_ => SearchCustomers());
-            AddClientCommand = new RelayCommand(_ => AddClient());
+            AddClientCommand = new RelayCommand(async _ => await AddClientAsync());
             OpenClientDetailsCommand = new RelayCommand(obj => OpenClientDetails(obj));
+
+            //Pobranie klientów z API przy starcie ViewModelu
+            _ = LoadCustomersAsync();
+        }
+
+        private async Task LoadCustomersAsync()
+        {
+            await _dataService.LoadCustomersAsync();
+            Customers = new ObservableCollection<Customer>(_dataService.Customers);
         }
 
         private void SearchCustomers()
         {
             if (string.IsNullOrWhiteSpace(SearchText))
             {
-                Customers = new ObservableCollection<Customer>(DataService.Instance.Customers);
+                Customers = new ObservableCollection<Customer>(_dataService.Customers);
             }
             else
             {
                 Customers = new ObservableCollection<Customer>(
-                    DataService.Instance.Customers
+                    _dataService.Customers
                         .Where(c => c.Name.ToLower().Contains(SearchText.ToLower()) ||
                                     c.Company.ToLower().Contains(SearchText.ToLower()) ||
                                     c.City.ToLower().Contains(SearchText.ToLower()))
@@ -62,11 +74,10 @@ namespace CRM_WPF.ViewModels
             }
         }
 
-        private void AddClient()
+        private async Task AddClientAsync()
         {
             var newClient = new Customer
             {
-                Id = DataService.Instance.Customers.Count + 1,
                 Name = "Nowy Klient",
                 Company = "",
                 Email = "",
@@ -79,8 +90,15 @@ namespace CRM_WPF.ViewModels
                 LastPurchaseDate = System.DateTime.Now
             };
 
-            DataService.Instance.Customers.Add(newClient);
-            Customers.Add(newClient);
+            bool success = await _dataService.AddCustomerAsync(newClient);
+            if (success)
+            {
+                await LoadCustomersAsync(); //Odswieżenie listy po dodaniu klienta
+            }
+            else
+            {
+                MessageBox.Show("Błąd podczas dodawania klienta!", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void OpenClientDetails(object obj)

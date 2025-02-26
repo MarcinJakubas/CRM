@@ -5,10 +5,10 @@ namespace CRM_WPF.Views
 {
     public partial class TransactionsView : UserControl
     {
-        public TransactionsView()
+        public TransactionsView(TransactionsViewModel viewModel)
         {
             InitializeComponent();
-            DataContext = new TransactionsViewModel(); 
+            DataContext = viewModel;
         }
     }
 }

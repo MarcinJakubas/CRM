@@ -5,10 +5,10 @@ namespace CRM_WPF.Views
 {
     public partial class ReportsView : UserControl
     {
-        public ReportsView()
+        public ReportsView(ReportsViewModel viewModel)
         {
             InitializeComponent();
-            DataContext = new ReportsViewModel();
+            DataContext = viewModel;
         }
     }
 }

@@ -15,9 +15,6 @@ using System.Windows.Shapes;
 
 namespace CRM_WPF.Views
 {
-    /// <summary>
-    /// Logika interakcji dla klasy Dashboard.xaml
-    /// </summary>
     public partial class DashboardView : UserControl
     {
         public DashboardView()
