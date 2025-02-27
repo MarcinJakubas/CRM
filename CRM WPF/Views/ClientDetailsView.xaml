@@ -26,22 +26,19 @@
             <Border Grid.Column="0" Background="White" CornerRadius="10" Padding="20" Margin="0,0,10,0">
                 <StackPanel>
                     <Label Content="Nazwa Klienta:"/>
-                    <TextBox x:Name="txtName" IsReadOnly="True"/>
+                    <TextBox Text="{Binding Customer.Name}" IsReadOnly="True"/>
 
                     <Label Content="Email:"/>
-                    <TextBox x:Name="txtEmail" IsReadOnly="True"/>
+                    <TextBox Text="{Binding Customer.Email}" IsReadOnly="True"/>
 
                     <Label Content="Telefon:"/>
-                    <TextBox x:Name="txtPhone" IsReadOnly="True"/>
+                    <TextBox Text="{Binding Customer.Phone}" IsReadOnly="True"/>
 
                     <Label Content="Adres:"/>
-                    <TextBox x:Name="txtAddress" IsReadOnly="True"/>
+                    <TextBox Text="{Binding Customer.Address}" IsReadOnly="True"/>
 
                     <Label Content="Data rejestracji:"/>
-                    <TextBox x:Name="txtRegisteredDate" IsReadOnly="True"/>
-
-                    <Label Content="Status:"/>
-                    <TextBox x:Name="txtStatus" IsReadOnly="True"/>
+                    <TextBox Text="{Binding Customer.RegistrationDate, StringFormat=d}" IsReadOnly="True"/>
                 </StackPanel>
             </Border>
 
@@ -49,15 +46,15 @@
             <Border Grid.Column="1" Background="White" CornerRadius="10" Padding="20" Margin="10,0,0,0">
                 <StackPanel>
                     <Label Content="Notatki:"/>
-                    <TextBox x:Name="txtNotes" AcceptsReturn="True" TextWrapping="Wrap" Height="150"/>
+                    <TextBox Text="{Binding Notes}" AcceptsReturn="True" TextWrapping="Wrap" Height="150"/>
 
                     <Label Content="Dodatkowe Informacje:"/>
-                    <TextBox x:Name="txtAdditionalInfo" AcceptsReturn="True" TextWrapping="Wrap" Height="38"/>
+                    <TextBox Text="{Binding AdditionalInfo}" AcceptsReturn="True" TextWrapping="Wrap" Height="38"/>
 
                     <!-- Przyciski akcji -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                        <Button Content="Zapisz" Width="100" Click="SaveButton_Click"/>
-                        <Button Content="Anuluj" Width="100" Click="CancelButton_Click" Background="#e74c3c"/>
+                        <Button Content="Zapisz" Width="100" Command="{Binding SaveCommand}"/>
+                        <Button Content="Anuluj" Width="100" Command="{Binding CancelCommand}" Background="#e74c3c"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
@@ -68,7 +65,7 @@
             <StackPanel>
                 <TextBlock Text="Historia transakcji" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
 
-                <DataGrid x:Name="TransactionsDataGrid" AutoGenerateColumns="False" Height="200" IsReadOnly="True"
+                <DataGrid ItemsSource="{Binding Transactions}" AutoGenerateColumns="False" Height="200" IsReadOnly="True"
                           GridLinesVisibility="All" AlternationCount="2">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Produkt" Binding="{Binding ProductName}" Width="200"/>

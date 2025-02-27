@@ -39,12 +39,30 @@ namespace CRM_Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomer(int id, Customer customer)
+        public async Task<IActionResult> UpdateCustomer(int id, [FromBody] Customer updatedCustomer)
         {
-            if (id != customer.Id) return BadRequest();
-            _context.Entry(customer).State = EntityState.Modified;
+            if (id != updatedCustomer.Id)
+            {
+                return BadRequest("Mismatched customer ID.");
+            }
+
+            var customer = await _context.Customers.FindAsync(id);
+            if (customer == null)
+            {
+                return NotFound("Customer not found.");
+            }
+
+            customer.Name = updatedCustomer.Name;
+            customer.Email = updatedCustomer.Email;
+            customer.Phone = updatedCustomer.Phone;
+            customer.Address = updatedCustomer.Address;
+            customer.Notes = updatedCustomer.Notes;
+            customer.AdditionalInfo = updatedCustomer.AdditionalInfo;
+
+            _context.Customers.Update(customer);
             await _context.SaveChangesAsync();
-            return NoContent();
+
+            return Ok(customer);
         }
 
         [HttpDelete("{id}")]

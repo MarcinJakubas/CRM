@@ -12,6 +12,8 @@ namespace CRM_WPF.ViewModels
     public class ClientsViewModel : BaseViewModel
     {
         private readonly DataService _dataService;
+        private readonly CsvExportService _csvExportService;
+        private readonly ExcelExportService _excelExportService;
 
         private ObservableCollection<Customer> _customers;
         public ObservableCollection<Customer> Customers
@@ -36,18 +38,24 @@ namespace CRM_WPF.ViewModels
 
         public ICommand SearchCommand { get; }
         public ICommand AddClientCommand { get; }
-        public ICommand OpenClientDetailsCommand { get; }
+        public ICommand DeleteClientCommand { get; }
+        public ICommand ExportToCsvCommand { get; }
+        public ICommand ExportToExcelCommand { get; }
 
-        public ClientsViewModel(DataService dataService)
+        public ClientsViewModel(DataService dataService, CsvExportService csvExportService, ExcelExportService excelExportService)
         {
             _dataService = dataService;
+            _csvExportService = csvExportService;
+            _excelExportService = excelExportService;
+
             Customers = new ObservableCollection<Customer>();
 
             SearchCommand = new RelayCommand(_ => SearchCustomers());
             AddClientCommand = new RelayCommand(async _ => await AddClientAsync());
-            OpenClientDetailsCommand = new RelayCommand(obj => OpenClientDetails(obj));
+            DeleteClientCommand = new RelayCommand(async _ => await DeleteClientAsync());
+            ExportToCsvCommand = new RelayCommand(_ => ExportToCsv());
+            ExportToExcelCommand = new RelayCommand(_ => ExportToExcel());
 
-            //Pobranie klientów z API przy starcie ViewModelu
             _ = LoadCustomersAsync();
         }
 
@@ -68,8 +76,7 @@ namespace CRM_WPF.ViewModels
                 Customers = new ObservableCollection<Customer>(
                     _dataService.Customers
                         .Where(c => c.Name.ToLower().Contains(SearchText.ToLower()) ||
-                                    c.Company.ToLower().Contains(SearchText.ToLower()) ||
-                                    c.City.ToLower().Contains(SearchText.ToLower()))
+                                    c.Company.ToLower().Contains(SearchText.ToLower()))
                 );
             }
         }
@@ -93,7 +100,7 @@ namespace CRM_WPF.ViewModels
             bool success = await _dataService.AddCustomerAsync(newClient);
             if (success)
             {
-                await LoadCustomersAsync(); //Odswieżenie listy po dodaniu klienta
+                await LoadCustomersAsync();
             }
             else
             {
@@ -101,13 +108,33 @@ namespace CRM_WPF.ViewModels
             }
         }
 
-        private void OpenClientDetails(object obj)
+        private async Task DeleteClientAsync()
         {
-            if (obj is Customer customer)
+            if (SelectedCustomer == null)
             {
-                MessageBox.Show($"Otwieranie szczegółów dla:\n\n{customer.Name}",
-                                "Szczegóły klienta", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Wybierz klienta do usunięcia.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
+
+            bool success = await _dataService.DeleteCustomerAsync(SelectedCustomer.Id);
+            if (success)
+            {
+                await LoadCustomersAsync();
+            }
+            else
+            {
+                MessageBox.Show("Błąd podczas usuwania klienta!", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ExportToCsv()
+        {
+            _csvExportService.ExportToCsv(Customers.ToList());
+        }
+
+        private void ExportToExcel()
+        {
+            _excelExportService.ExportToExcel(Customers.ToList());
         }
     }
 }

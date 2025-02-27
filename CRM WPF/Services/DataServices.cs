@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using CRM_WPF.Helpers;
 using CRM_WPF.Models;
 
 namespace CRM_WPF.Services
@@ -10,7 +11,7 @@ namespace CRM_WPF.Services
     public class DataService
     {
         private readonly HttpClient _httpClient;
-        private const string API_BASE_URL = "http://localhost:5000/api"; // Zmienić na adres testowy
+        private readonly string _apiBaseUrl = AppConfig.ApiBaseUrl;
 
         public ObservableCollection<Customer> Customers { get; private set; }
         public ObservableCollection<Product> Products { get; private set; }
@@ -29,7 +30,7 @@ namespace CRM_WPF.Services
         {
             try
             {
-                var customers = await _httpClient.GetFromJsonAsync<Customer[]>($"{API_BASE_URL}/customers");
+                var customers = await _httpClient.GetFromJsonAsync<Customer[]>($"{_apiBaseUrl}/customers");
                 if (customers != null)
                 {
                     Customers.Clear();
@@ -48,7 +49,7 @@ namespace CRM_WPF.Services
         {
             try
             {
-                var products = await _httpClient.GetFromJsonAsync<Product[]>($"{API_BASE_URL}/products");
+                var products = await _httpClient.GetFromJsonAsync<Product[]>($"{_apiBaseUrl}/products");
                 if (products != null)
                 {
                     Products.Clear();
@@ -67,7 +68,7 @@ namespace CRM_WPF.Services
         {
             try
             {
-                var transactions = await _httpClient.GetFromJsonAsync<Transaction[]>($"{API_BASE_URL}/transactions");
+                var transactions = await _httpClient.GetFromJsonAsync<Transaction[]>($"{_apiBaseUrl}/transactions");
                 if (transactions != null)
                 {
                     Transactions.Clear();
@@ -86,7 +87,7 @@ namespace CRM_WPF.Services
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync($"{API_BASE_URL}/customers", newCustomer);
+                var response = await _httpClient.PostAsJsonAsync($"{_apiBaseUrl}/customers", newCustomer);
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
@@ -99,7 +100,7 @@ namespace CRM_WPF.Services
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync($"{API_BASE_URL}/products", newProduct);
+                var response = await _httpClient.PostAsJsonAsync($"{_apiBaseUrl}/products", newProduct);
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
@@ -112,7 +113,7 @@ namespace CRM_WPF.Services
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync($"{API_BASE_URL}/transactions", newTransaction);
+                var response = await _httpClient.PostAsJsonAsync($"{_apiBaseUrl}/transactions", newTransaction);
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
@@ -125,7 +126,7 @@ namespace CRM_WPF.Services
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"{API_BASE_URL}/customers/{id}");
+                var response = await _httpClient.DeleteAsync($"{_apiBaseUrl}/customers/{id}");
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
@@ -134,5 +135,19 @@ namespace CRM_WPF.Services
                 return false;
             }
         }
+        public async Task<bool> UpdateCustomerAsync(Customer customer)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"customers/{customer.Id}", customer);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Błąd podczas aktualizacji danych klienta:{ex.Message}");
+                return false;
+            }
+        }
+
     }
 }
