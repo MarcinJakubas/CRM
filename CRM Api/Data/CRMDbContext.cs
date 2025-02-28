@@ -12,5 +12,6 @@ namespace CRM_Api.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<CalendarEvent> CalendarEvents { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

@@ -51,3 +51,9 @@ CREATE TABLE CalendarEvents (
     EventColor NVARCHAR(50), -- Przechowujemy jako kod HEX lub nazwa koloru
     FOREIGN KEY (CustomerId) REFERENCES Customers(Id) ON DELETE CASCADE
 );
+
+CREATE TABLE Users (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Username NVARCHAR(100) UNIQUE NOT NULL,
+    PasswordHash NVARCHAR(255) NOT NULL,
+);
