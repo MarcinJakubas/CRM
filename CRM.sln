@@ -5,7 +5,13 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRM WPF", "CRM WPF\CRM WPF.csproj", "{31D538DA-9E81-47ED-A3A9-54FE4DB1C383}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRM Api", "CRM Api\CRM Api.csproj", "{3BBB98FC-E692-4F84-A177-6DDDF938943D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRM Api", "CRM Api\CRM Api.csproj", "{3BBB98FC-E692-4F84-A177-6DDDF938943D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{00316A4E-3A4E-4754-BAA5-C22394F1D1FE}"
+	ProjectSection(SolutionItems) = preProject
+		CRM WPF\SQL\Procedures.sql = CRM WPF\SQL\Procedures.sql
+		CRM WPF\SQL\Table.sql = CRM WPF\SQL\Table.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

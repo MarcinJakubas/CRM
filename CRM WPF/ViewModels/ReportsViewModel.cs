@@ -2,6 +2,7 @@
 using CRM_WPF.Services;
 using LiveCharts;
 using LiveCharts.Wpf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -54,26 +55,28 @@ namespace CRM_WPF.ViewModels
 
         private async Task LoadDataAsync()
         {
-            await _dataService.LoadTransactionsAsync();
-            await _dataService.LoadProductsAsync();
-
-            var transactions = _dataService.Transactions.ToList();
-            var products = _dataService.Products.ToList();
-
-            if (!transactions.Any())
+            try
             {
-                MessageBox.Show("Brak danych transakcji w API!", "Informacja", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
+                await _dataService.LoadTransactionsAsync();
+                await _dataService.LoadProductsAsync();
 
-            // Grupowanie sprzedaży miesięcznej (dla wykresu słupkowego całkowitej sprzedaży)
-            var salesByMonth = transactions
-                .GroupBy(t => t.Month)
-                .OrderBy(g => g.Key)
-                .Select(g => new { Month = g.Key, TotalSales = g.Sum(t => t.Value) })
-                .ToList();
+                var transactions = _dataService.Transactions.ToList();
+                var products = _dataService.Products.ToList();
 
-            SalesData = new SeriesCollection
+                if (!transactions.Any())
+                {
+                    MessageBox.Show("Brak danych transakcji w API!", "Informacja", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                // Grupowanie sprzedaży miesięcznej (dla wykresu słupkowego całkowitej sprzedaży)
+                var salesByMonth = transactions
+                    .GroupBy(t => t.Month)
+                    .OrderBy(g => g.Key)
+                    .Select(g => new { Month = g.Key, TotalSales = g.Sum(t => t.Value) })
+                    .ToList();
+
+                SalesData = new SeriesCollection
             {
                 new ColumnSeries
                 {
@@ -83,70 +86,83 @@ namespace CRM_WPF.ViewModels
                 }
             };
 
-            OnPropertyChanged(nameof(SalesData));
+                OnPropertyChanged(nameof(SalesData));
 
-            //Tworzenie mapowania produktów dla `ComboBox`
-            Products = products.ToDictionary(p => p.Id, p => p.Name);
-            OnPropertyChanged(nameof(Products));
+                //Tworzenie mapowania produktów dla `ComboBox`
+                Products = products.ToDictionary(p => p.Id, p => p.Name);
+                OnPropertyChanged(nameof(Products));
 
-            // Tworzenie wykresu kołowego z podziałem sprzedaży na produkty
-            var groupedTransactions = transactions
-                .Where(t => t.Product != null)
-                .GroupBy(t => t.Product.Name)
-                .ToList();
+                // Tworzenie wykresu kołowego z podziałem sprzedaży na produkty
+                var groupedTransactions = transactions
+                    .Where(t => t.Product != null)
+                    .GroupBy(t => t.Product.Name)
+                    .ToList();
 
-            if (groupedTransactions.Any())
-            {
-                PieChartData = new SeriesCollection();
-                foreach (var group in groupedTransactions)
+                if (groupedTransactions.Any())
                 {
-                    PieChartData.Add(new PieSeries
+                    PieChartData = new SeriesCollection();
+                    foreach (var group in groupedTransactions)
                     {
-                        Title = group.Key,
-                        Values = new ChartValues<double> { group.Sum(t => t.Value) },
-                        DataLabels = true
-                    });
+                        PieChartData.Add(new PieSeries
+                        {
+                            Title = group.Key,
+                            Values = new ChartValues<double> { group.Sum(t => t.Value) },
+                            DataLabels = true
+                        });
+                    }
                 }
+                else
+                {
+                    PieChartData = new SeriesCollection();
+                }
+                OnPropertyChanged(nameof(PieChartData));
             }
-            else
+            catch (Exception ex)
             {
-                PieChartData = new SeriesCollection();
+                await ErrorLogger.LogError(ex);
+                MessageBox.Show(ex.Message);
             }
-
-            OnPropertyChanged(nameof(PieChartData));
         }
 
         private async Task LoadProductDataAsync(int productId)
         {
-            if (productId == 0 || !_dataService.Products.Any(p => p.Id == productId))
+            try
             {
-                ProductSalesData = new SeriesCollection();
-                OnPropertyChanged(nameof(ProductSalesData));
-                return;
-            }
-
-            var transactions = _dataService.Transactions
-                .Where(t => t.Product != null && t.Product.Id == productId)
-                .ToList();
-
-            if (!transactions.Any())
-            {
-                ProductSalesData = new SeriesCollection();
-            }
-            else
-            {
-                ProductSalesData = new SeriesCollection
+                if (productId == 0 || !_dataService.Products.Any(p => p.Id == productId))
                 {
-                    new ColumnSeries
-                    {
-                        Title = $"Sprzedaż: {Products[productId]}",
-                        Values = new ChartValues<double>(transactions.Select(x => x.Value)),
-                        DataLabels = true
-                    }
-                };
-            }
+                    ProductSalesData = new SeriesCollection();
+                    OnPropertyChanged(nameof(ProductSalesData));
+                    return;
+                }
 
-            OnPropertyChanged(nameof(ProductSalesData));
+                var transactions = _dataService.Transactions
+                    .Where(t => t.Product != null && t.Product.Id == productId)
+                    .ToList();
+
+                if (!transactions.Any())
+                {
+                    ProductSalesData = new SeriesCollection();
+                }
+                else
+                {
+                    ProductSalesData = new SeriesCollection
+                    {
+                        new ColumnSeries
+                        {
+                            Title = $"Sprzedaż: {Products[productId]}",
+                            Values = new ChartValues<double>(transactions.Select(x => x.Value)),
+                            DataLabels = true
+                        }
+                    };
+                }
+
+                OnPropertyChanged(nameof(ProductSalesData));
+            }
+            catch (Exception ex)
+            {
+                await ErrorLogger.LogError(ex);
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

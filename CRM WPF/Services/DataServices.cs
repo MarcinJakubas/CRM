@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using System.Windows;
 using CRM_WPF.Helpers;
 using CRM_WPF.Models;
 
@@ -42,6 +43,7 @@ namespace CRM_WPF.Services
             }
             catch (Exception ex)
             {
+                await ErrorLogger.LogError(ex);
                 Console.WriteLine($"Błąd podczas pobierania klientów: {ex.Message}");
             }
         }
@@ -61,6 +63,7 @@ namespace CRM_WPF.Services
             }
             catch (Exception ex)
             {
+                await ErrorLogger.LogError(ex);
                 Console.WriteLine($"Błąd podczas pobierania produktów: {ex.Message}");
             }
         }
@@ -80,6 +83,7 @@ namespace CRM_WPF.Services
             }
             catch (Exception ex)
             {
+                await ErrorLogger.LogError(ex);
                 Console.WriteLine($"Błąd podczas pobierania transakcji: {ex.Message}");
             }
         }
@@ -92,6 +96,7 @@ namespace CRM_WPF.Services
             }
             catch (Exception ex)
             {
+                await ErrorLogger.LogError(ex);
                 Console.WriteLine($"Błąd podczas dodawania klienta: {ex.Message}");
                 return false;
             }
@@ -105,6 +110,7 @@ namespace CRM_WPF.Services
             }
             catch (Exception ex)
             {
+                await ErrorLogger.LogError(ex);
                 Console.WriteLine($"Błąd podczas dodawania produktu: {ex.Message}");
                 return false;
             }
@@ -118,6 +124,7 @@ namespace CRM_WPF.Services
             }
             catch (Exception ex)
             {
+                await ErrorLogger.LogError(ex);
                 Console.WriteLine($"Błąd podczas dodawania transakcji: {ex.Message}");
                 return false;
             }
@@ -131,6 +138,7 @@ namespace CRM_WPF.Services
             }
             catch (Exception ex)
             {
+                await ErrorLogger.LogError(ex);
                 Console.WriteLine($"Błąd podczas usuwania klienta: {ex.Message}");
                 return false;
             }
@@ -144,6 +152,7 @@ namespace CRM_WPF.Services
             }
             catch (Exception ex)
             {
+                await ErrorLogger.LogError(ex);
                 Console.WriteLine($"Błąd podczas aktualizacji danych klienta:{ex.Message}");
                 return false;
             }
