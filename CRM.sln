@@ -9,8 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRM Api", "CRM Api\CRM Api.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{00316A4E-3A4E-4754-BAA5-C22394F1D1FE}"
 	ProjectSection(SolutionItems) = preProject
-		CRM WPF\SQL\Procedures.sql = CRM WPF\SQL\Procedures.sql
-		CRM WPF\SQL\Table.sql = CRM WPF\SQL\Table.sql
+		Procedures.sql = Procedures.sql
+		Tables.sql = Tables.sql
 	EndProjectSection
 EndProject
 Global
