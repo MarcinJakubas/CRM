@@ -25,6 +25,13 @@ namespace CRM_WPF.Services
             Customers = new ObservableCollection<Customer>();
             Products = new ObservableCollection<Product>();
             Transactions = new ObservableCollection<Transaction>();
+
+            // Jeśli użytkownik jest zalogowany, dodaj nagłówek do każdego żądania
+            if (UserSession.CurrentUser != null)
+            {
+                _httpClient.DefaultRequestHeaders.Add("User-Id", UserSession.CurrentUser.Id.ToString());
+                _httpClient.DefaultRequestHeaders.Add("Username", UserSession.CurrentUser.Username);
+            }
         }
 
         public async Task LoadCustomersAsync()

@@ -60,7 +60,7 @@ CREATE TABLE Users (
 );
 
 -- Tabela zmian w bazie
-CREATE TABLE ChangeLog (
+CREATE TABLE AuditLog (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     UserId INT NULL,
     Username NVARCHAR(100) NULL,
