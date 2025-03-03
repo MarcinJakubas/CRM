@@ -58,6 +58,9 @@ namespace CRM_WPF.Views
                         case "Reports":
                             MainContent.Content = _serviceProvider.GetRequiredService<ReportsView>();
                             break;
+                        case "Admin":
+                            MainContent.Content = _serviceProvider.GetRequiredService<AdminView>();
+                            break;
                     }
                 }
             }

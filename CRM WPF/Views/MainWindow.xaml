@@ -59,6 +59,7 @@
                     <ListBoxItem Content="Transakcje" Tag="Transaction"/>
                     <ListBoxItem Content="Kalendarz" Tag="Calendar"/>
                     <ListBoxItem Content="Raporty" Tag="Reports"/>
+                    <ListBoxItem Content="Konfiguracja" Tag="Admin"/>
                 </ListBox>
             </StackPanel>
         </Border>
